@@ -19,7 +19,7 @@ The product catalog is seeded from `records.json`, while user state (sessions, c
 
 - Node.js 20+ (or Bun). This repo includes `bun.lock`, so Bun is the easiest path.
 - Postgres database.
-- (Optional) Tambo API key for the AI assistant.
+- Tambo API key (recommended): required to enable the ShopMate AI assistant.
 - (Optional) Stripe + Resend keys for checkout + email.
 
 ### 1) Install dependencies
@@ -63,7 +63,10 @@ Notes:
 
 If you just want to run the app locally to browse the catalog and try auth/cart, you can start with only `DATABASE_URL`.
 
-Leaving `STRIPE_SECRET_KEY`, `RESEND_API_KEY`, and `NEXT_PUBLIC_TAMBO_API_KEY` empty means checkout, emails, and the ShopMate AI chat won’t work (and routes like `/api/checkout` will fail).
+If you leave `STRIPE_SECRET_KEY`, `RESEND_API_KEY`, and `NEXT_PUBLIC_TAMBO_API_KEY` empty:
+
+- Product browsing, auth, cart, and likes still work.
+- Checkout, transactional emails, and the ShopMate AI chat are disabled; calling `/api/checkout` without Stripe configured will return an error by design.
 
 ### 3) Create DB tables (Drizzle)
 
@@ -125,6 +128,8 @@ The floating chat lives in `src/components/tambo` and uses `@tambo-ai/react` pri
 
 Tambo tools don’t mutate React state directly. Instead they emit events via `src/lib/store-events.ts`:
 
+The `emitStoreEvent(type, payload)` helper in `src/lib/store-events.ts` is the single API surface for tools to communicate UI changes.
+
 ```text
 Tambo tool -> emitStoreEvent(type, payload)
           -> StoreEventSync (in providers.tsx)
@@ -164,6 +169,8 @@ The `highlightElement` and `startOnboarding` tools emit `highlight` events.
 
 All tools are registered in `src/components/tambo/tools.ts`.
 
+Some tools depend on external services (Stripe, Resend, Tambo). In environments where these services aren’t configured, those tools may fail or be effectively disabled.
+
 - **Catalog + discovery**: `searchProducts`, `getFilteredProducts`, `getProductById`, `getFeaturedProducts`, `getProductsByCategory`, `getCategories`, `getBrands`
 - **Cart + likes**: `addToCart`, `removeFromCart`, `getCart`, `toggleLike`, `getLikes`
 - **Navigation + flows**: `navigateToPage`, `initiateCheckout`
@@ -195,5 +202,5 @@ All components are registered in `src/components/tambo/component-registry.ts` (w
 
 Notes:
 
-- `AuthFormChat` signs users in/up via the Better Auth client (`src/lib/auth-client.ts`) and then redirects to `/`.
+- `AuthFormChat` uses the shared Better Auth client (`src/lib/auth-client.ts`), so successful sign-in/sign-up updates the same session used across the app before redirecting to `/`.
 - `DashboardChartChat` renders charts from a simple `Array<{ name: string; value: number }>` data shape.
