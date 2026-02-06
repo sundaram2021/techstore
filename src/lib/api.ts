@@ -121,3 +121,27 @@ export async function searchProducts(
 ): Promise<LegacyProduct[]> {
   return getProducts(offset, limit, { search: query });
 }
+
+// Get curated featured products
+export async function getFeaturedProducts(): Promise<LegacyProduct[]> {
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  
+  // Curated list of premium products with good images
+  const featuredIds = [
+    "4550902", // Alienware 4K Laptop
+    "9439005", // Kindle Paperwhite
+    "4370400", // Amazon Fire TV
+    "9254006", // Alpine CarPlay
+    "5911209", // Anki DRIVE
+    "4503200", // Acer Aspire R14
+    "4390000", // Fire HD 10
+    "9306108"  // Fire HDX 8.9
+  ];
+
+  const products = (productsData as Product[])
+    .filter(p => featuredIds.includes(p.objectID))
+    // Maintain the order of the IDs
+    .sort((a, b) => featuredIds.indexOf(a.objectID) - featuredIds.indexOf(b.objectID));
+
+  return JSON.parse(JSON.stringify(products.map(transformToLegacyProduct)));
+}

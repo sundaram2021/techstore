@@ -54,7 +54,7 @@ export default function CartPage() {
     }
 
     return (
-        <div className="container mx-auto px-6 lg:px-8 py-10">
+        <div className="container mx-auto px-6 lg:px-8 py-10" data-highlight="cart-page">
             <h1 className="text-3xl font-bold text-gray-900 mb-8">Shopping Cart ({cart.items.length})</h1>
 
             <div className="flex flex-col lg:flex-row gap-10">

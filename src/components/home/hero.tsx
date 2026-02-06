@@ -4,7 +4,7 @@ import { ArrowRight, Cpu, Truck, ShieldCheck, Zap, Monitor } from "lucide-react"
 
 export function Hero() {
     return (
-        <section className="relative overflow-hidden bg-white tech-pattern">
+        <section className="relative overflow-hidden bg-white tech-pattern" data-highlight="hero-section">
             {/* Main Hero */}
             <div className="container mx-auto px-6 lg:px-8 pt-12 pb-24 sm:pt-20 sm:pb-32">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -34,7 +34,7 @@ export function Hero() {
                         {/* CTAs */}
                         <div className="flex flex-wrap gap-4 pt-4">
                             <Link href="/products">
-                                <Button size="lg" className="h-14 px-8 rounded-full text-base font-semibold btn-press group bg-gradient-to-r from-[#06b6d4] to-[#0ea5e9] hover:from-[#0284c7] hover:to-[#0369a1] border-0">
+                                <Button size="lg" className="h-14 px-8 rounded-full text-base font-semibold btn-press group bg-gradient-to-r from-[#06b6d4] to-[#0ea5e9] hover:from-[#0284c7] hover:to-[#0369a1] border-0" data-highlight="shop-now-button">
                                     Shop Now
                                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                                 </Button>

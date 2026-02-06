@@ -7,7 +7,7 @@ import { NewsletterForm } from "@/components/home/newsletter-form";
 
 export function Footer() {
     return (
-        <footer className="bg-gradient-to-br from-[#0c4a6e] via-[#0369a1] to-[#0284c7] text-white mt-auto">
+        <footer className="bg-gradient-to-br from-[#0c4a6e] via-[#0369a1] to-[#0284c7] text-white mt-auto" data-highlight="footer">
             <div className="container mx-auto px-6 py-16 lg:px-8">
                 <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
                     {/* Brand */}

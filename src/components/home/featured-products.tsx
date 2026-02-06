@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getProducts } from "@/lib/api";
+import { getFeaturedProducts } from "@/lib/api";
 import { ProductGrid } from "@/components/product/product-grid";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
@@ -23,8 +23,8 @@ function ProductSkeleton() {
 
 export function FeaturedProducts() {
     const { data: products, isLoading, error, refetch } = useQuery({
-        queryKey: ["featured-products"],
-        queryFn: () => getProducts(0, 8),
+        queryKey: ["featured-products", "curated"],
+        queryFn: () => getFeaturedProducts(),
     });
 
     if (isLoading) {

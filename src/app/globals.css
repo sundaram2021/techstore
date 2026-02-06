@@ -14,11 +14,11 @@
   --border: #e5e5e5;
   --card: #ffffff;
   --card-hover: #f5f5f5;
-  
+
   /* Secondary accent for variety */
   --secondary-accent: #8b5cf6;
   --secondary-accent-light: #f5f3ff;
-  
+
   /* Animation timing */
   --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
@@ -81,8 +81,12 @@ html {
 
 /* Animation keyframes */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeInUp {
@@ -141,23 +145,42 @@ html {
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 @keyframes glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(14, 165, 233, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(14, 165, 233, 0.5); }
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(14, 165, 233, 0.5);
+  }
 }
 
 /* Utility classes */
@@ -205,19 +228,36 @@ html {
   animation: fadeInUp var(--duration-slow) var(--ease-out-expo) forwards;
 }
 
-.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
-.stagger-children > *:nth-child(2) { animation-delay: 75ms; }
-.stagger-children > *:nth-child(3) { animation-delay: 150ms; }
-.stagger-children > *:nth-child(4) { animation-delay: 225ms; }
-.stagger-children > *:nth-child(5) { animation-delay: 300ms; }
-.stagger-children > *:nth-child(6) { animation-delay: 375ms; }
-.stagger-children > *:nth-child(7) { animation-delay: 450ms; }
-.stagger-children > *:nth-child(8) { animation-delay: 525ms; }
+.stagger-children > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger-children > *:nth-child(2) {
+  animation-delay: 75ms;
+}
+.stagger-children > *:nth-child(3) {
+  animation-delay: 150ms;
+}
+.stagger-children > *:nth-child(4) {
+  animation-delay: 225ms;
+}
+.stagger-children > *:nth-child(5) {
+  animation-delay: 300ms;
+}
+.stagger-children > *:nth-child(6) {
+  animation-delay: 375ms;
+}
+.stagger-children > *:nth-child(7) {
+  animation-delay: 450ms;
+}
+.stagger-children > *:nth-child(8) {
+  animation-delay: 525ms;
+}
 
 /* Premium hover lift effect */
 .hover-lift {
-  transition: transform var(--duration-normal) var(--ease-spring),
-              box-shadow var(--duration-normal) var(--ease-spring);
+  transition:
+    transform var(--duration-normal) var(--ease-spring),
+    box-shadow var(--duration-normal) var(--ease-spring);
 }
 
 .hover-lift:hover {
@@ -244,7 +284,7 @@ html {
 }
 
 .underline-animation::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -2px;
   left: 0;
@@ -286,8 +326,9 @@ html {
 .reveal {
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity var(--duration-slow) var(--ease-out-expo),
-              transform var(--duration-slow) var(--ease-out-expo);
+  transition:
+    opacity var(--duration-slow) var(--ease-out-expo),
+    transform var(--duration-slow) var(--ease-out-expo);
 }
 
 .reveal.visible {
@@ -325,14 +366,46 @@ html {
 
 /* Tech pattern overlay */
 .tech-pattern {
-  background-image: 
-    radial-gradient(circle at 25% 25%, rgba(14, 165, 233, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+  background-image:
+    radial-gradient(
+      circle at 25% 25%,
+      rgba(14, 165, 233, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(6, 182, 212, 0.05) 0%,
+      transparent 50%
+    );
+}
+
+/* ── UI Highlight / Onboarding ── */
+@keyframes highlight-pulse {
+  0%,
+  100% {
+    outline-color: rgba(6, 182, 212, 0.9);
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4);
+  }
+  50% {
+    outline-color: rgba(14, 165, 233, 1);
+    box-shadow: 0 0 20px 4px rgba(14, 165, 233, 0.35);
+  }
+}
+
+.highlight-active {
+  outline: 3px solid rgba(6, 182, 212, 0.9) !important;
+  outline-offset: 4px !important;
+  animation: highlight-pulse 0.8s ease-in-out 3 !important;
+  position: relative;
+  z-index: 45 !important;
+  transition:
+    outline 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 /* Grid pattern for tech aesthetic */
 .grid-pattern {
-  background-image: 
+  background-image:
     linear-gradient(rgba(14, 165, 233, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(14, 165, 233, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;

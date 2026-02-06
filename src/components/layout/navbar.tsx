@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, Search, Menu, X, Zap, LogOut, Settings, LayoutDashboard, User } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, Zap, LogOut, Settings, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,7 @@ export function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const { data: session } = authClient.useSession();
     const { cart } = useCart();
     const router = useRouter();
@@ -53,35 +54,30 @@ export function Navbar() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, []);
 
-    // Need to safely check admin email, usually handled via env var or server check, 
-    // but for client side nav visibility we can check pattern or just rely on server redirect for security.
-    // Ideally, we'd have a 'role' in session, but we are keeping schema simple as per instructions.
-    // We will hardcode check here for visual cue, but security relies on server.
-    // WAIT: User said "add it in .env.local and use it from there". 
-    // Client components can only access NEXT_PUBLIC env vars. 
-    // If we want to check admin on client, we need a public env var or a server action to check.
-    // For now, let's assume we can expose it or just let the button be there and server blocks it.
-    // OR we can make it NEXT_PUBLIC_ADMIN_EMAIL for client visibility.
-    // ACTUALLY: User said "don't add admin email anywhere in codebase... add in .env.local". 
-    // I will use a server action or API to check permission often? 
-    // Or just check email match on client if I expose it via NEXT_PUBLIC. 
-    // Security-wise, exposing "who is admin" email in public JS is not great but acceptable for this scope if requested.
-    // BETTER APPROACH: Just show "Dashboard" if session exists, let middleware/page block it. 
-    // OR: Check against the email in the session if it matches a known pattern?
-    // Let's use a simple helper or just show it for now? 
-    // NO, I will add a small client-side check if I can.
-    // I'll stick to: Show "Dashboard" for everyone or try to check role.
-    // Given the constraints, I will assume the user session has email and match it against a hardcoded value? 
-    // NO, User said "add it in .env.local". 
-    // So I can't hardcode. 
-    // I will try to use `process.env.NEXT_PUBLIC_ADMIN_EMAIL` if available, otherwise just show it.
+    useEffect(() => {
+        let active = true;
+        if (!session) {
+            setIsAdmin(false);
+            return () => {
+                active = false;
+            };
+        }
 
-    // Changing plan: I will assume I can't see the env var here easily without NEXT_PUBLIC.
-    // I will blindly show the "Dashboard" link for all logged in users, 
-    // but the PAGE will reject them. This is a common pattern for simple apps.
-    // OR... I can fetch a "isAdmin" status. 
+        fetch("/api/auth/permissions", { cache: "no-store" })
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data) => {
+                if (!active) return;
+                setIsAdmin(!!data?.isAdmin);
+            })
+            .catch(() => {
+                if (!active) return;
+                setIsAdmin(false);
+            });
 
-    // For this task, I'll implementing a "Smart" dropdown that shows Dashboard. 
+        return () => {
+            active = false;
+        };
+    }, [session?.user?.email]);
 
     return (
         <>
@@ -95,7 +91,7 @@ export function Navbar() {
             >
                 <div className="container mx-auto flex h-20 items-center justify-between px-6 lg:px-8">
                     {/* Logo */}
-                    <Link href="/" className="group flex items-center gap-3">
+                    <Link href="/" className="group flex items-center gap-3" data-highlight="logo">
                         <div className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-[#06b6d4] to-[#0ea5e9] flex items-center justify-center overflow-hidden">
                             <Zap className="h-5 w-5 text-white transition-transform duration-300 group-hover:scale-110" />
                         </div>
@@ -109,24 +105,28 @@ export function Navbar() {
                         <Link
                             href="/"
                             className="underline-animation text-sm font-medium text-gray-600 transition-colors hover:text-[#0ea5e9]"
+                            data-highlight="nav-home"
                         >
                             Home
                         </Link>
                         <Link
                             href="/products"
                             className="underline-animation text-sm font-medium text-gray-600 transition-colors hover:text-[#0ea5e9]"
+                            data-highlight="nav-products"
                         >
                             Products
                         </Link>
                         <Link
                             href="#"
                             className="underline-animation text-sm font-medium text-gray-600 transition-colors hover:text-[#0ea5e9]"
+                            data-highlight="nav-categories"
                         >
                             Categories
                         </Link>
                         <Link
                             href="#"
                             className="underline-animation text-sm font-medium text-gray-600 transition-colors hover:text-[#0ea5e9]"
+                            data-highlight="nav-deals"
                         >
                             Deals
                         </Link>
@@ -139,6 +139,7 @@ export function Navbar() {
                             size="icon"
                             className="hidden sm:flex rounded-full hover:bg-[#f0f9ff] hover:text-[#0ea5e9]"
                             onClick={() => setIsSearchOpen(true)}
+                            data-highlight="search-button"
                         >
                             <Search className="h-5 w-5" />
                             <span className="sr-only">Search</span>
@@ -155,6 +156,7 @@ export function Navbar() {
                                     router.push("/cart");
                                 }
                             }}
+                            data-highlight="cart-button"
                         >
                             <ShoppingCart className="h-5 w-5" />
                             {session && (cart?.items.length || 0) > 0 && (
@@ -168,7 +170,7 @@ export function Navbar() {
                         {session ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                                    <Button variant="ghost" className="relative h-10 w-10 rounded-full" data-highlight="user-menu">
                                         <Avatar className="h-10 w-10 border border-gray-200">
                                             <AvatarImage src={session.user.image || ""} alt={session.user.name || "User"} />
                                             <AvatarFallback className="bg-[#0ea5e9]/10 text-[#0ea5e9]">
@@ -187,10 +189,12 @@ export function Navbar() {
                                         </div>
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={() => router.push("/admin/dashboard")}>
-                                        <LayoutDashboard className="mr-2 h-4 w-4" />
-                                        <span>Dashboard</span>
-                                    </DropdownMenuItem>
+                                    {isAdmin && (
+                                        <DropdownMenuItem onClick={() => router.push("/admin/dashboard")}>
+                                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                                            <span>Dashboard</span>
+                                        </DropdownMenuItem>
+                                    )}
                                     <DropdownMenuItem onClick={() => router.push("/settings")}>
                                         <Settings className="mr-2 h-4 w-4" />
                                         <span>Settings</span>
@@ -210,7 +214,7 @@ export function Navbar() {
                             </DropdownMenu>
                         ) : (
                             <Link href="/sign-in">
-                                <Button>Sign In</Button>
+                                <Button data-highlight="sign-in-button">Sign In</Button>
                             </Link>
                         )}
 

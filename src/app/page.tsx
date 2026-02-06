@@ -13,14 +13,14 @@ export default function Home() {
       <Hero />
 
       {/* Featured Products Section */}
-      <section className="py-20 sm:py-28 bg-white">
+      <section className="py-20 sm:py-28 bg-white" data-highlight="featured-products">
         <div className="container mx-auto px-6 lg:px-8">
           <FeaturedProducts />
         </div>
       </section>
 
       {/* Categories Section */}
-      <section className="py-20 sm:py-28 bg-gray-50 grid-pattern">
+      <section className="py-20 sm:py-28 bg-gray-50 grid-pattern" data-highlight="categories-section">
         <div className="container mx-auto px-6 lg:px-8">
           <CategoriesShowcase />
         </div>
@@ -63,7 +63,7 @@ export default function Home() {
       </section>
 
       {/* Newsletter CTA */}
-      <section className="py-20 sm:py-28 bg-[#f0f9ff]">
+      <section className="py-20 sm:py-28 bg-[#f0f9ff]" data-highlight="newsletter-section">
         <div className="container mx-auto px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center space-y-8">
             <span className="inline-flex items-center gap-2 text-sm font-medium text-[#0ea5e9] uppercase tracking-wider">
@@ -85,7 +85,7 @@ export default function Home() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 sm:py-28 bg-white">
+      <section className="py-20 sm:py-28 bg-white" data-highlight="cta-section">
         <div className="container mx-auto px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 mb-6">
             Ready to Explore More Tech?

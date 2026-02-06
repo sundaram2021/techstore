@@ -1,0 +1,11 @@
+// Barrel export for generative components
+export { ProductCardChat } from "./product-card-chat";
+export { ProductListChat } from "./product-list-chat";
+export { ProductComparison } from "./product-comparison";
+export { BudgetRecommendations } from "./budget-recommendations";
+export { CartSummaryChat } from "./cart-summary-chat";
+export { CategoryBrowserChat } from "./category-browser-chat";
+export { NewsletterSignupChat } from "./newsletter-signup-chat";
+export { DashboardChartChat } from "./dashboard-chart-chat";
+export { AuthFormChat } from "./auth-form-chat";
+export { OrderConfirmation } from "./order-confirmation";

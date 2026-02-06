@@ -45,7 +45,7 @@ export function NewsletterForm({ className, inputClassName, buttonClassName }: N
     };
 
     return (
-        <form onSubmit={handleSubmit} className={cn("flex flex-col sm:flex-row gap-4 max-w-md mx-auto", className)}>
+        <form onSubmit={handleSubmit} className={cn("flex flex-col sm:flex-row gap-4 max-w-md mx-auto", className)} data-highlight="newsletter-form">
             <input
                 type="email"
                 placeholder="Enter your email"
