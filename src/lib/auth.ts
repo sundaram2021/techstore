@@ -3,7 +3,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db";
 import * as schema from "./auth-schema"; 
-import { Resend } from "resend";
+import { resend } from "./resend";
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -16,11 +16,6 @@ export const auth = betterAuth({
         enabled: true,
         async sendResetPassword({ url, user }) {
             if (!user || !user.email) return;
-            const resendApiKey = process.env.RESEND_API_KEY;
-            if (!resendApiKey) {
-                throw new Error("RESEND_API_KEY is not set");
-            }
-            const resend = new Resend(resendApiKey);
             await resend.emails.send({
                 from: "onboarding@resend.dev", // Should be verified domain in prod
                 to: user.email,

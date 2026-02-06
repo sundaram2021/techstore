@@ -15,14 +15,9 @@ export function getResend() {
   return resendClient;
 }
 
-export const resend = new Proxy(
-  {},
-  {
-    get(_target, prop) {
-      return Reflect.get(
-        getResend() as unknown as Record<PropertyKey, unknown>,
-        prop,
-      );
-    },
+// Intentionally expose only the email-sending surface of Resend.
+export const resend = {
+  get emails() {
+    return getResend().emails;
   },
-) as unknown as Resend;
+} satisfies Pick<Resend, 'emails'>;
