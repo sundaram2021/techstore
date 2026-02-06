@@ -1,6 +1,8 @@
 "use client";
 
 import { X, Sparkles, Plus } from "lucide-react";
+import Image from "next/image";
+import tamboPng from "@/assets/tambo.png";
 
 interface ChatHeaderProps {
     onClose: () => void;
@@ -12,11 +14,12 @@ export function ChatHeader({ onClose, onNewChat }: ChatHeaderProps) {
         <div className="flex items-center justify-between p-4 border-b border-white/10 bg-gradient-to-r from-cyan-500/10 to-teal-500/10">
             <div className="flex items-center gap-3">
                 <div className="w-8 h-8 flex items-center justify-center">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                        src="/tambo.png"
+                    <Image
+                        src={tamboPng}
                         alt="ShopMate AI"
-                        className="w-full h-full object-contain"
+                        width={32}
+                        height={32}
+                        className="object-contain"
                     />
                 </div>
                 <div>
