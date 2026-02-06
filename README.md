@@ -59,6 +59,12 @@ Notes:
 - If `NEXT_PUBLIC_TAMBO_API_KEY` is not set, the app still runs, but Tambo features are disabled (see `TamboWrapper` in `src/components/tambo/tambo-provider.tsx`).
 - Checkout requires both `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_APP_URL` (see `src/app/api/checkout/route.ts`).
 
+### Quick local setup (no payments/email/AI)
+
+If you just want to run the app locally to browse the catalog and try auth/cart, you can start with only `DATABASE_URL`.
+
+Leaving `STRIPE_SECRET_KEY`, `RESEND_API_KEY`, and `NEXT_PUBLIC_TAMBO_API_KEY` empty means checkout, emails, and the ShopMate AI chat won’t work (and routes like `/api/checkout` will fail).
+
 ### 3) Create DB tables (Drizzle)
 
 The schema lives in `src/lib/auth-schema.ts` and is referenced by `drizzle.config.ts`.
@@ -133,6 +139,12 @@ Examples:
 
 Event types are centralized in `src/lib/store-events.ts`. When adding a new event (or changing a payload shape), update the emitting tool(s) and any consumers (`StoreEventSync`, `useAISearchResults`, `HighlightOverlay`) together.
 
+When adding a new store event:
+
+1. Add the type (and any expected payload fields) in `src/lib/store-events.ts`.
+2. Emit it from your Tambo tool via `emitStoreEvent(type, payload)`.
+3. Handle it in the relevant consumer (`StoreEventSync`, `useAISearchResults`, `HighlightOverlay`).
+
 ### AI search that updates the Products page
 
 `searchProducts` and other catalog tools emit `product-search`. The `/products` page listens via `useAISearchResults()` (`src/hooks/use-ai-search.ts`) and renders results using the same Gen UI list component used in chat:
@@ -163,6 +175,8 @@ Tool dependencies:
 
 - `initiateCheckout` requires Stripe (`STRIPE_SECRET_KEY`, `NEXT_PUBLIC_APP_URL`).
 - `subscribeNewsletter` (and checkout receipt email) require Resend (`RESEND_API_KEY`).
+
+If those services aren’t configured in an environment, these tools will fail at runtime and shouldn’t be treated as always-available actions.
 
 ## Tambo Gen UI components used in this app
 
