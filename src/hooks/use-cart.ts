@@ -5,7 +5,15 @@ import { getCart, addToCart, updateCartItem, removeFromCart } from "@/lib/action
 import { Product } from "@/lib/types";
 
 // Type for the cart returned by getCart
+// We extract the item type for easier usage in helpers
 type CartData = Awaited<ReturnType<typeof getCart>>;
+type CartItem = CartData["items"][number];
+
+function calculateCartTotal(items: CartItem[]): number {
+    return items.reduce((acc, item) => {
+        return acc + ((item.product?.price || 0) * item.quantity);
+    }, 0);
+}
 
 export function useCart() {
     const queryClient = useQueryClient();
@@ -27,8 +35,6 @@ export function useCart() {
 
             // Default empty cart structure if none exists
             const currentCart = previousCart || { items: [], total: 0 };
-            
-            // Check if items exists, if not initialize it (though type says it should exist if total exists)
             const items = currentCart.items || [];
 
             const existingItemIndex = items.findIndex((item) => item.productId === productId);
@@ -43,27 +49,27 @@ export function useCart() {
                 };
             } else {
                 // Optimistic new item
-                newItems.unshift({
+                // We ensure it matches the CartItem shape as closely as possible
+                const newItem: CartItem = {
                     id: `temp-${Date.now()}`,
-                    cartId: (currentCart as any).id || "temp-cart-id", 
+                    cartId: "id" in currentCart ? currentCart.id : "temp-cart-id", 
                     productId,
                     quantity,
-                    addedAt: new Date(),
+                    addedAt: new Date(), // Optimistic Date
                     product: product,
-                });
+                };
+                newItems.unshift(newItem);
             }
 
-            // Recalculate total
-            const newTotal = newItems.reduce((acc, item) => {
-                 return acc + ((item.product?.price || 0) * item.quantity);
-            }, 0);
+            const newTotal = calculateCartTotal(newItems);
 
             // We need to preserve other properties if they exist
+            // using "as CartData" is safer than "as any" here as we know we've adhered to the shape
             const newCart = {
                 ...currentCart,
                 items: newItems,
                 total: newTotal
-            } as any; // Cast to any to satisfy the union type
+            } as CartData;
 
             queryClient.setQueryData<CartData>(queryKey, newCart);
 
@@ -93,16 +99,13 @@ export function useCart() {
                     item.id === itemId ? { ...item, quantity } : item
                 );
 
-                 // Recalculate total
-                 const newTotal = newItems.reduce((acc, item) => {
-                    return acc + ((item.product?.price || 0) * item.quantity);
-               }, 0);
+                const newTotal = calculateCartTotal(newItems);
 
                 queryClient.setQueryData<CartData>(queryKey, {
                     ...previousCart,
                     items: newItems,
                     total: newTotal
-                } as any);
+                } as CartData);
             }
 
             return { previousCart };
@@ -129,16 +132,13 @@ export function useCart() {
             if (previousCart && previousCart.items) {
                 const newItems = previousCart.items.filter(item => item.id !== itemId);
                 
-                  // Recalculate total
-                  const newTotal = newItems.reduce((acc, item) => {
-                    return acc + ((item.product?.price || 0) * item.quantity);
-               }, 0);
+                const newTotal = calculateCartTotal(newItems);
 
                 queryClient.setQueryData<CartData>(queryKey, {
                     ...previousCart,
                     items: newItems,
                     total: newTotal
-                } as any);
+                } as CartData);
             }
 
             return { previousCart };

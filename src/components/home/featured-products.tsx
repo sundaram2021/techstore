@@ -1,6 +1,3 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
 import { getFeaturedProducts } from "@/lib/api";
 import { ProductGrid } from "@/components/product/product-grid";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,20 +18,24 @@ function ProductSkeleton() {
     );
 }
 
-export function FeaturedProducts() {
-    const { data: products, isLoading, error, refetch } = useQuery({
-        queryKey: ["featured-products", "curated"],
-        queryFn: () => getFeaturedProducts(),
-    });
+export function FeaturedProductsSkeleton() {
+    return (
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {[...Array(8)].map((_, i) => (
+                <ProductSkeleton key={i} />
+            ))}
+        </div>
+    );
+}
 
-    if (isLoading) {
-        return (
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {[...Array(8)].map((_, i) => (
-                    <ProductSkeleton key={i} />
-                ))}
-            </div>
-        );
+export async function FeaturedProducts() {
+    let products;
+    let error;
+
+    try {
+        products = await getFeaturedProducts();
+    } catch (e) {
+        error = e;
     }
 
     if (error) {
@@ -45,11 +46,7 @@ export function FeaturedProducts() {
                         <RefreshCw className="h-8 w-8 text-[#0ea5e9]" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900">Failed to Load Products</h3>
-                    <p className="text-gray-500">We couldn&apos;t fetch the products. Please try again.</p>
-                    <Button onClick={() => refetch()} variant="outline" className="mt-4 btn-press border-[#0ea5e9] text-[#0ea5e9] hover:bg-[#f0f9ff]">
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Try Again
-                    </Button>
+                    <p className="text-gray-500">We couldn&apos;t fetch the products. Please refresh page.</p>
                 </div>
             </div>
         );

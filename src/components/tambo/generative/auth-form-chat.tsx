@@ -51,8 +51,9 @@ export function AuthFormChat({ mode, prefilledEmail }: AuthFormChatProps) {
       }
       router.push("/");
       router.refresh();
-    } catch (err: any) {
-      toast.error(err?.message ?? "Authentication failed");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Authentication failed";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

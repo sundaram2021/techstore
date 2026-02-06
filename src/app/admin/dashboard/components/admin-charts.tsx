@@ -17,10 +17,15 @@ import {
     Area
 } from 'recharts';
 
+interface ChartDataPoint {
+    name: string;
+    value: number;
+}
+
 interface AdminChartsProps {
-    brandData: any[];
-    categoryData: any[];
-    priceData: any[];
+    brandData: ChartDataPoint[];
+    categoryData: ChartDataPoint[];
+    priceData: ChartDataPoint[];
 }
 
 const COLORS = ['#0ea5e9', '#0284c7', '#0369a1', '#e0f2fe', '#bae6fd'];

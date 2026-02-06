@@ -7,7 +7,7 @@ import { useState } from "react";
 import { ShoppingBag, Heart, Eye, Zap } from "lucide-react";
 import { toast } from "sonner";
 
-import { LegacyProduct } from "@/lib/types";
+import { LegacyProduct, Product } from "@/lib/types";
 import { PLACEHOLDER_IMAGE } from "@/lib/constants";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,25 @@ import { authClient } from "@/lib/auth-client";
 interface ProductCardProps {
     product: LegacyProduct;
     index?: number;
+}
+
+function mapLegacyToProduct(legacy: LegacyProduct): Product {
+    return {
+        objectID: legacy.id.toString(),
+        name: legacy.title,
+        description: legacy.description,
+        brand: "Unknown",
+        categories: [legacy.category.name],
+        hierarchicalCategories: { lvl0: legacy.category.name },
+        type: "Product",
+        price: legacy.price,
+        price_range: "$$",
+        image: legacy.images[0] || "",
+        url: "",
+        free_shipping: false,
+        popularity: 0,
+        rating: 0,
+    };
 }
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
@@ -50,6 +69,31 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         return src;
     };
 
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (!session) {
+            router.push("/sign-in");
+            return;
+        }
+
+        const productPayload = mapLegacyToProduct(product);
+
+        addToCart({
+            productId: product.id.toString(),
+            quantity: 1,
+            product: productPayload
+        });
+    };
+
+    const handleToggleLike = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (!session) {
+            router.push("/sign-in");
+            return;
+        }
+        toggleLike(product.id.toString());
+    };
+
     return (
         <Card
             className={cn(
@@ -76,7 +120,6 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                     )}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     onError={() => setImageError(true)}
-                    unoptimized
                 />
 
                 {/* Overlay on hover */}
@@ -98,28 +141,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                         variant="secondary"
                         size="sm"
                         className="flex-1 h-11 bg-white/95 backdrop-blur-sm hover:bg-[#0ea5e9] hover:text-white rounded-xl font-medium btn-press"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (!session) {
-                                router.push("/sign-in");
-                                return;
-                            }
-
-                            // Transform legacy product to Product type (best effort) for optimistic update
-                            const productPayload: any = {
-                                objectID: product.id.toString(),
-                                name: product.title,
-                                price: product.price,
-                                image: product.images[0],
-                                // ... other props
-                            };
-
-                            addToCart({
-                                productId: product.id.toString(),
-                                quantity: 1,
-                                product: productPayload
-                            });
-                        }}
+                        onClick={handleAddToCart}
                     >
                         <ShoppingBag className="h-4 w-4 mr-2" />
                         Add to Cart
@@ -131,14 +153,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                             "h-11 w-11 bg-white/95 backdrop-blur-sm rounded-xl btn-press",
                             liked ? "text-red-500 hover:text-red-600 hover:bg-white" : "hover:bg-[#0ea5e9] hover:text-white"
                         )}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (!session) {
-                                router.push("/sign-in");
-                                return;
-                            }
-                            toggleLike(product.id.toString());
-                        }}
+                        onClick={handleToggleLike}
                     >
                         <Heart className={cn("h-4 w-4", liked && "fill-current")} />
                     </Button>
