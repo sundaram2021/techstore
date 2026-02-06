@@ -25,7 +25,8 @@ The product catalog is seeded from `records.json`, while user state (sessions, c
 
 ### Prerequisites
 
-- Node.js 20+ (or Bun). This repo includes `bun.lock`, so Bun is the easiest path.
+- Bun (recommended). This repo includes `bun.lock`, so Bun is the easiest path.
+- Alternatively: Node.js 20+ with `npm`/`pnpm`.
 - Postgres database.
 - Tambo API key (recommended): required to enable the ShopMate AI assistant.
 - (Optional) Stripe + Resend keys for checkout + email.
@@ -34,6 +35,8 @@ The product catalog is seeded from `records.json`, while user state (sessions, c
 
 ```bash
 bun install
+# or
+npm install
 ```
 
 ### 2) Configure environment variables
@@ -42,7 +45,7 @@ Create `.env.local` in the repo root.
 
 ```bash
 # Database
-DATABASE_URL=postgres://postgres:postgres@localhost:5432/techstore
+DATABASE_URL=postgres://postgres:password@localhost:5432/techstore_local
 
 # App URL (used by Stripe success/cancel URLs)
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -64,6 +67,7 @@ NEXT_PUBLIC_TAMBO_API_KEY=
 
 Notes:
 
+- The `DATABASE_URL` example is meant for local development. Use strong, unique credentials in staging/production.
 - If `NEXT_PUBLIC_TAMBO_API_KEY` is not set, the app still runs, but Tambo features are disabled (see `TamboWrapper` in `src/components/tambo/tambo-provider.tsx`).
 - When `NEXT_PUBLIC_TAMBO_API_KEY` is missing, `TamboProvider` is not mounted, so the ShopMate AI assistant will not function.
 - Checkout requires both `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_APP_URL` (see `src/app/api/checkout/route.ts`).
@@ -85,6 +89,8 @@ Quick start (push schema directly to your DB):
 
 ```bash
 bunx drizzle-kit push
+# or
+npx drizzle-kit push
 ```
 
 Optional (generate + migrate):
@@ -98,6 +104,8 @@ bunx drizzle-kit migrate
 
 ```bash
 bun dev
+# or
+npm run dev
 ```
 
 Open `http://localhost:3000`.
@@ -139,11 +147,8 @@ Tambo tools don’t mutate React state directly. Instead they emit events via `s
 
 The `emitStoreEvent(type, payload)` helper in `src/lib/store-events.ts` is the single API surface for tools to communicate UI changes.
 
-```text
-Tambo tool -> emitStoreEvent(type, payload)
-          -> StoreEventSync (in providers.tsx)
-          -> invalidate React Query caches / router navigation / checkout redirect
-```
+- Tools call `emitStoreEvent(type, payload)`.
+- `StoreEventSync` (in `src/app/providers.tsx`) listens and reacts (invalidate React Query caches, navigate, redirect to checkout, etc.).
 
 Examples:
 
