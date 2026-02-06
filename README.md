@@ -13,6 +13,14 @@ The product catalog is seeded from `records.json`, while user state (sessions, c
 - **Auth**: Better Auth (email/password + Google).
 - **AI assistant**: a floating chat (FAB) on every page, backed by Tambo tools + Gen UI components.
 
+## Quickstart
+
+1. Clone the repo and `cd` into it.
+2. Create `.env.local` and set at least `DATABASE_URL`.
+3. Install dependencies: `bun install`.
+4. Create tables: `bunx drizzle-kit push`.
+5. Start the dev server: `bun dev`, then open `http://localhost:3000`.
+
 ## Setup
 
 ### Prerequisites
@@ -57,6 +65,7 @@ NEXT_PUBLIC_TAMBO_API_KEY=
 Notes:
 
 - If `NEXT_PUBLIC_TAMBO_API_KEY` is not set, the app still runs, but Tambo features are disabled (see `TamboWrapper` in `src/components/tambo/tambo-provider.tsx`).
+- When `NEXT_PUBLIC_TAMBO_API_KEY` is missing, `TamboProvider` is not mounted, so the ShopMate AI assistant will not function.
 - Checkout requires both `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_APP_URL` (see `src/app/api/checkout/route.ts`).
 
 ### Quick local setup (no payments/email/AI)
@@ -184,6 +193,8 @@ Tool dependencies:
 - `subscribeNewsletter` (and checkout receipt email) require Resend (`RESEND_API_KEY`).
 
 If those services aren’t configured in an environment, these tools will fail at runtime and shouldn’t be treated as always-available actions.
+
+In those environments, you should expect errors/toasts instead of the normal side effects (for example, no redirect to Stripe checkout).
 
 ## Tambo Gen UI components used in this app
 
