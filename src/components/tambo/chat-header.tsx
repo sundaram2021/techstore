@@ -2,7 +2,7 @@
 
 import { X, Sparkles, Plus } from "lucide-react";
 import Image from "next/image";
-import tamboPng from "../../../public/tambo.png";
+import tamboPng from "@/assets/tambo.png";
 
 interface ChatHeaderProps {
     onClose: () => void;
@@ -19,7 +19,7 @@ export function ChatHeader({ onClose, onNewChat }: ChatHeaderProps) {
                         alt="ShopMate AI"
                         width={32}
                         height={32}
-                        className="w-full h-full object-contain"
+                        className="object-contain"
                     />
                 </div>
                 <div>

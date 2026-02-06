@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { fabVariants, fabIconVariants, pulseKeyframes, pulseTransition } from "./animations";
-import tamboPng from "../../../public/tambo.png";
+import tamboPng from "@/assets/tambo.png";
 
 interface FabButtonProps {
     isOpen: boolean;
@@ -45,9 +45,9 @@ export function FabButton({ isOpen, onClick }: FabButtonProps) {
                 <Image
                     src={tamboPng}
                     alt="ShopMate AI"
-                    width={40}
-                    height={40}
-                    className="w-full h-full object-contain drop-shadow-md"
+                    fill
+                    sizes="(min-width: 640px) 40px, 36px"
+                    className="object-contain drop-shadow-md"
                     priority
                 />
             </motion.div>
