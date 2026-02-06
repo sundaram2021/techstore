@@ -56,7 +56,7 @@ NEXT_PUBLIC_TAMBO_API_KEY=
 
 Notes:
 
-- If `NEXT_PUBLIC_TAMBO_API_KEY` is not set, the app still runs, but Tambo features are disabled (see `src/components/tambo/tambo-provider.tsx`).
+- If `NEXT_PUBLIC_TAMBO_API_KEY` is not set, the app still runs, but Tambo features are disabled (see `TamboWrapper` in `src/components/tambo/tambo-provider.tsx`).
 - Checkout requires both `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_APP_URL` (see `src/app/api/checkout/route.ts`).
 
 ### 3) Create DB tables (Drizzle)
@@ -131,6 +131,8 @@ Examples:
 - `navigateToPage` emits `navigation` so the router pushes.
 - `initiateCheckout` emits `checkout` and the browser navigates to Stripe.
 
+Event types are centralized in `src/lib/store-events.ts`. When adding a new event (or changing a payload shape), update the emitting tool(s) and any consumers (`StoreEventSync`, `useAISearchResults`, `HighlightOverlay`) together.
+
 ### AI search that updates the Products page
 
 `searchProducts` and other catalog tools emit `product-search`. The `/products` page listens via `useAISearchResults()` (`src/hooks/use-ai-search.ts`) and renders results using the same Gen UI list component used in chat:
@@ -157,6 +159,11 @@ All tools are registered in `src/components/tambo/tools.ts`.
 - **Guidance**: `highlightElement`, `startOnboarding`
 - **Email**: `subscribeNewsletter`
 
+Tool dependencies:
+
+- `initiateCheckout` requires Stripe (`STRIPE_SECRET_KEY`, `NEXT_PUBLIC_APP_URL`).
+- `subscribeNewsletter` (and checkout receipt email) require Resend (`RESEND_API_KEY`).
+
 ## Tambo Gen UI components used in this app
 
 All components are registered in `src/components/tambo/component-registry.ts` (with Zod schemas in `src/components/tambo/schemas.ts`).
@@ -171,3 +178,8 @@ All components are registered in `src/components/tambo/component-registry.ts` (w
 - `DashboardChartChat`: charts inside chat (bar/pie/area/line)
 - `AuthFormChat`: sign-in/sign-up UI inside chat
 - `OrderConfirmation`: order summary
+
+Notes:
+
+- `AuthFormChat` signs users in/up via the Better Auth client (`src/lib/auth-client.ts`) and then redirects to `/`.
+- `DashboardChartChat` renders charts from a simple `Array<{ name: string; value: number }>` data shape.
