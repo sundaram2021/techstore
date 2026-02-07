@@ -21,6 +21,11 @@ The product catalog is seeded from `records.json`, while user state (sessions, c
 4. Create tables: `bunx drizzle-kit push`.
 5. Start the dev server: `bun dev`, then open `http://localhost:3000`.
 
+### Demo/Testing Credentials
+
+- **Email**: `test@gmail.com`
+- **Password**: `test@gmail.com`
+
 ## Setup
 
 ### Prerequisites
