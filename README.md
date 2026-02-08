@@ -4,6 +4,13 @@ TechStore is a Next.js e-commerce app with an AI shopping assistant ("ShopMate A
 
 The product catalog is seeded from `records.json`, while user state (sessions, carts, likes) is stored in Postgres via Drizzle + Better Auth.
 
+## Demo
+
+
+https://github.com/user-attachments/assets/aa7ce367-1170-4165-ab10-f00636b8a353
+
+
+
 ## What this app includes
 
 - **Catalog + browsing**: `/products` with filtering.
